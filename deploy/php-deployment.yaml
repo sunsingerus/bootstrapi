@@ -24,6 +24,9 @@ spec:
         - name: app
           image: sunsingerus/bootstrapi:0.0.1
           imagePullPolicy: Always
+          ports:
+            - containerPort: 9000
+
 #          volumeMounts:
 #          - name: code
 #            mountPath: /code

@@ -20,7 +20,7 @@ spec:
 #      - name: code
 #        persistentVolumeClaim:
 #          claimName: code
-        - name: config
+        - name: nginx-config-volume
           configMap:
             name: nginx-config
             items:
@@ -34,5 +34,5 @@ spec:
           volumeMounts:
 #          - name: code
 #            mountPath: /code
-            - name: config
+            - name: nginx-config-colume
               mountPath: /etc/nginx/conf.d
