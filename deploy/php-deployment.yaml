@@ -22,7 +22,7 @@ spec:
 #          claimName: code
       containers:
         - name: app
-          image: sunsingerus/bootstrapi:0.0.1
+          image: sunsingerus/bootstrapi:dev
           imagePullPolicy: Always
           ports:
             - containerPort: 9000
