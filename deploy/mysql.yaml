@@ -1,0 +1,46 @@
+apiVersion: pxc.percona.com/v1-2-0
+kind: PerconaXtraDBCluster
+metadata:
+  name: bootstrapi-mysql
+  finalizers:
+    - delete-pxc-pods-in-order
+#    - delete-proxysql-pvc
+#    - delete-pxc-pvc
+spec:
+  secretsName: my-cluster-secrets
+  sslSecretName: my-cluster-ssl
+  sslInternalSecretName: my-cluster-ssl-internal
+  allowUnsafeConfigurations: true
+  pxc:
+    size: 1
+    image: percona/percona-xtradb-cluster-operator:1.2.0-pxc
+    resources:
+      requests:
+        memory: 1G
+        cpu: 600m
+    podDisruptionBudget:
+      maxUnavailable: 1
+    volumeSpec:
+      persistentVolumeClaim:
+        resources:
+          requests:
+            storage: 6Gi
+    gracePeriod: 600
+  proxysql:
+    enabled: true
+    size: 1
+    image: percona/percona-xtradb-cluster-operator:1.2.0-proxysql
+    resources:
+      requests:
+        memory: 1G
+        cpu: 600m
+    volumeSpec:
+      persistentVolumeClaim:
+        resources:
+          requests:
+            storage: 2Gi
+    podDisruptionBudget:
+      maxUnavailable: 1
+    gracePeriod: 30
+  pmm:
+    enabled: false
