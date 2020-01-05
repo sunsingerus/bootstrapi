@@ -34,5 +34,5 @@ spec:
           volumeMounts:
 #          - name: code
 #            mountPath: /code
-            - name: nginx-config-colume
+            - name: nginx-config-volume
               mountPath: /etc/nginx/conf.d
