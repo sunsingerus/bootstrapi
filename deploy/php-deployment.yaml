@@ -1,3 +1,15 @@
+# You may want to mount /var/www/html/log as a PersistentVolume
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: log-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -16,28 +28,33 @@ spec:
         app: php
         tier: backend
     spec:
-#      volumes:
-#      - name: code
-#        persistentVolumeClaim:
-#          claimName: code
+      # You may want to mount /var/www/html/log as a PersistentVolume
+      # Specify dedicated volume for logs
+      volumes:
+        - name: log-volume
+          persistentVolumeClaim:
+            claimName: log-pvc
+      # We need to chown -R www-data:www-data /var/www/html/log
+      initContainers:
+        - name: volume-mount-chown
+          image: busybox
+          command:
+            - "/bin/sh"
+            - "-c"
+            - "--"
+          args:
+            - "chown -R 33:33 /var/www/html/log"
+          volumeMounts:
+            - name: log-volume
+              mountPath: /var/www/html/log
       containers:
         - name: app
           image: sunsingerus/bootstrapi:dev
           imagePullPolicy: Always
           ports:
             - containerPort: 9000
-
-#          volumeMounts:
-#          - name: code
-#            mountPath: /code
-#      initContainers:
-#      - name: install
-#        image: busybox
-#        volumeMounts:
-#        - name: code
-#          mountPath: /code
-#        command:
-#        - wget
-#        - "-O"
-#        - "/code/index.php"
-#        - https://raw.githubusercontent.com/do-community/php-kubernetes/master/index.php
+          # You may want to mount /var/www/html/log as a PersistentVolume
+          # Mount dedicated volume for logs
+          volumeMounts:
+            - name: log-volume
+              mountPath: /var/www/html/log
